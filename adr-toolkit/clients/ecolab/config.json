@@ -1,0 +1,65 @@
+{
+  "client": "Ecolab",
+  "code": "ecolab",
+  "industry": "Manufacturing/Chemical",
+  "version": "1.0",
+  "branding": {
+    "primaryColor": "#0066CC",
+    "secondaryColor": "#0099FF",
+    "accentColor": "#00CCFF",
+    "logo": "ecolab-logo.png",
+    "fontFamily": "Ecolab Corporate, Arial, sans-serif",
+    "tagline": "Cleaning & Hygiene Solutions for a Cleaner Safer Healthier World"
+  },
+  "compliance": {
+    "dataClassification": "Confidential",
+    "retentionPolicy": "7 years",
+    "approvalRequired": true,
+    "regulatoryBodies": ["EPA", "OSHA", "FDA", "CFIA"],
+    "securityStandards": ["ISO 27001", "SOC 2"],
+    "dataPrivacy": ["GDPR", "CCPA"]
+  },
+  "customSections": [
+    "regulatoryCompliance",
+    "safetyStandards",
+    "environmentalImpact",
+    "chemicalHandling",
+    "globalStandards"
+  ],
+  "requiredMetadata": [
+    "businessUnit",
+    "region",
+    "regulatoryCompliance",
+    "safetyOfficer",
+    "environmentalImpact"
+  ],
+  "stakeholders": [
+    "VP of IT",
+    "Chief Digital Officer",
+    "Data Governance Lead",
+    "Regulatory Compliance Officer",
+    "Safety Director",
+    "Environmental Health & Safety (EHS) Lead"
+  ],
+  "businessDomains": [
+    "Food & Beverage",
+    "Healthcare",
+    "Industrial",
+    "Institutional",
+    "Energy",
+    "Transportation"
+  ],
+  "validationRules": {
+    "regulatoryComplianceRequired": true,
+    "safetyImpactAssessment": true,
+    "environmentalReview": true,
+    "dataPrivacyCheck": true
+  },
+  "approvalWorkflow": {
+    "technicalReview": true,
+    "businessReview": true,
+    "complianceReview": true,
+    "executiveApproval": true,
+    "approvalTimeout": "14 days"
+  }
+}

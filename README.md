@@ -1,6 +1,45 @@
 # Azure Service Analysis Framework
 
-A comprehensive framework for analyzing, documenting, and generating Architecture Decision Records (ADRs) for any Azure service supported by the Azure portal. This framework provides standardized approaches for service teardown, architectural analysis, and decision documentation.
+A comprehensive framework for analyzing, documenting, and generating Architecture Decis### 📊 Quality Standards & Metrics
+
+#### Analysis Quality Requirements
+- **Minimum Depth**: 10,000+ characters of documented reasoning and analysis
+- **Pattern Identification**: Identify 5+ reusable architectural patterns per analysis
+- **Evidence-Based**: All recommendations supported by data, Azure documentation, and analysis
+- **Actionable Outcomes**: Include specific, implementable next steps and success metrics
+
+#### Quality Assurance Framework
+- **Component Completeness**: 100% inventory of service components and dependencies
+- **Technical Accuracy**: Verification against official Azure documentation and best practices
+- **Business Alignment**: Recommendations tied to business objectives and stakeholder needs
+- **Documentation Standards**: Consistent ADR format with proper versioning and change tracking
+
+## 🛠️ ADR-Toolkit Integration
+
+### Professional ADR Generation
+The integrated ADR-Toolkit provides enterprise-grade ADR creation with:
+
+- **Client-Specific Branding**: Custom templates for Carter Machinery, Ecolab, and Western States
+- **Partner Branding**: Professional styling for Accenture, Acornsoft, Avanade, and eLogic
+- **DOCX Template Generation**: Automated creation of formatted Word documents
+- **PowerShell Automation**: Streamlined ADR creation and management workflows
+
+### Toolkit Features
+- **Multi-Format Output**: Markdown for version control, DOCX for stakeholders
+- **Template Customization**: Client and partner-specific configurations
+- **Quality Assurance**: Built-in validation and formatting standards
+- **Deployment Automation**: Easy installation for projects and teams
+
+### Quick ADR-Toolkit Usage
+```powershell
+# Deploy ADR-Toolkit to your project
+.\scripts\Deploy-ADR-Toolkit.ps1 -TargetPath "C:\MyProject" -Client "ecolab"
+
+# Generate a professional ADR
+.\adr-toolkit\Generate-Partner-ADR.ps1
+```
+
+See **[ADR-Toolkit README](adr-toolkit/README.md)** for complete documentation.ADRs) for any Azure service supported by the Azure portal. This framework provides standardized approaches for service teardown, architectural analysis, and decision documentation.
 
 ## Overview
 
@@ -40,8 +79,22 @@ azure-analysis/
 │   ├── aks/              # AKS cluster analysis examples
 │   └── synapse/          # Synapse workspace examples
 ├── docs/                 # Documentation and guides
-└── scripts/              # Automation and utility scripts
-```
+├── scripts/              # Automation and utility scripts
+├── adr-toolkit/          # 🆕 ADR-Toolkit with client/partner branding
+│   ├── ADR-DOCX-Template-Guide.md    # DOCX template creation guide
+│   ├── Create-DOCX-Templates.md      # Template development instructions
+│   ├── Generate-Partner-ADR.ps1      # Main ADR generation script
+│   ├── README.md                     # ADR-Toolkit documentation
+│   ├── clients/                      # Client-specific configurations
+│   │   ├── carter-machinery/
+│   │   ├── ecolab/
+│   │   └── western-states/
+│   └── partners/                     # Partner-specific branding
+│       ├── accenture/
+│       ├── acornsoft/
+│       ├── avanade/
+│       └── elogic/
+└── README.md
 
 ## Quick Start
 

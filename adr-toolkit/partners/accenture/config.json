@@ -1,0 +1,53 @@
+{
+  "partner": "Accenture",
+  "code": "accenture",
+  "version": "1.0",
+  "documentStandards": {
+    "fontFamily": "Accenture Corporate Font, Arial, sans-serif",
+    "primaryColor": "#A100FF",
+    "secondaryColor": "#6B46C1",
+    "headerStyle": "Accenture Purple Gradient",
+    "footerText": "© 2025 Accenture. All rights reserved. | Accenture Confidential",
+    "confidentialityLevels": ["Public", "Internal", "Confidential", "Restricted"],
+    "defaultClassification": "Accenture Confidential"
+  },
+  "requiredSections": [
+    "executiveSummary",
+    "businessCase",
+    "technicalArchitecture",
+    "riskAssessment",
+    "implementationRoadmap",
+    "stakeholderImpact"
+  ],
+  "optionalSections": [
+    "regulatoryCompliance",
+    "securityConsiderations",
+    "performanceBenchmarks"
+  ],
+  "metadataFields": [
+    "accenturePractice",
+    "clientEngagementManager",
+    "deliveryLead",
+    "solutionArchitect",
+    "technicalArchitect",
+    "projectManager"
+  ],
+  "outputFormats": ["docx", "pdf"],
+  "defaultTemplate": "accenture-template.docx",
+  "pandocOptions": {
+    "docx": ["--reference-doc=accenture-template.docx", "--toc", "--toc-depth=3"],
+    "pdf": ["--pdf-engine=pdflatex", "-V geometry:margin=1in", "--toc"]
+  },
+  "validationRules": {
+    "executiveSummaryRequired": true,
+    "businessCaseRequired": true,
+    "minimumOptions": 3,
+    "prosConsRequired": true,
+    "implementationPlanRequired": true
+  },
+  "approvalWorkflow": {
+    "requiredApprovers": ["Engagement Manager", "Solution Architect"],
+    "approvalTimeout": "7 days",
+    "escalationPath": "Practice Lead"
+  }
+}
