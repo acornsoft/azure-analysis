@@ -1,0 +1,54 @@
+{
+  "partner": "Avanade",
+  "code": "avanade",
+  "version": "1.0",
+  "documentStandards": {
+    "fontFamily": "Avanade Corporate Font, Segoe UI, sans-serif",
+    "primaryColor": "#0078D4",
+    "secondaryColor": "#005A9E",
+    "headerStyle": "Avanade Blue Professional",
+    "footerText": "© 2025 Avanade Inc. All rights reserved. | Avanade Confidential",
+    "confidentialityLevels": ["Public", "Internal", "Confidential", "Restricted"],
+    "defaultClassification": "Avanade Confidential"
+  },
+  "requiredSections": [
+    "executiveSummary",
+    "businessCase",
+    "technicalArchitecture",
+    "riskAssessment",
+    "implementationRoadmap",
+    "stakeholderImpact"
+  ],
+  "optionalSections": [
+    "regulatoryCompliance",
+    "securityConsiderations",
+    "performanceBenchmarks",
+    "scalabilityAnalysis"
+  ],
+  "metadataFields": [
+    "avanadePractice",
+    "clientEngagementManager",
+    "deliveryLead",
+    "solutionArchitect",
+    "technicalArchitect",
+    "projectManager"
+  ],
+  "outputFormats": ["docx", "pdf"],
+  "defaultTemplate": "avanade-template.docx",
+  "pandocOptions": {
+    "docx": ["--reference-doc=avanade-template.docx", "--toc", "--toc-depth=3"],
+    "pdf": ["--pdf-engine=pdflatex", "-V geometry:margin=1in", "--toc"]
+  },
+  "validationRules": {
+    "executiveSummaryRequired": true,
+    "businessCaseRequired": true,
+    "minimumOptions": 3,
+    "prosConsRequired": true,
+    "implementationPlanRequired": true
+  },
+  "approvalWorkflow": {
+    "requiredApprovers": ["Engagement Manager", "Solution Architect"],
+    "approvalTimeout": "7 days",
+    "escalationPath": "Practice Lead"
+  }
+}

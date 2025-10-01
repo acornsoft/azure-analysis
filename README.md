@@ -52,16 +52,21 @@ This repository contains:
 
 ## Current Examples
 
+### Azure Functions Examples
+- **[ADR-Azure-Functions-Change-Feed-Digital-Enablement-Ecolab-001.md](examples/azure-functions/ADR-Azure-Functions-Change-Feed-Digital-Enablement-Ecolab-001.md)**: Comprehensive analysis of Digital Enablement vs Change Feed patterns with Service Bus integration
+- **[ADR-Azure-Service-Bus-Integration-Patterns-Ecolab-002.md](examples/azure-functions/ADR-Azure-Service-Bus-Integration-Patterns-Ecolab-002.md)**: Service Bus connection isolation, error handling, and dead letter queue management
+- **[ADR-Dynamics-365-CRM-Integration-Patterns-Ecolab-003.md](examples/azure-functions/ADR-Dynamics-365-CRM-Integration-Patterns-Ecolab-003.md)**: CRM integration with FetchXML queries, transaction management, and entity relationships
+
 ### Azure Data Factory (ADF) Examples
 - **[ADR-D365-Snowflake-D-Pipeline-Analysis-001.md](examples/adf/ADR-D365-Snowflake-D-Pipeline-Analysis-001.md)**: Comprehensive analysis of production pipeline with One Customer enhancements
 - **[ADR-D365-PZMigration-D-Pipeline-Analysis-001.md](examples/adf/ADR-D365-PZMigration-D-Pipeline-Analysis-001.md)**: Reference implementation documenting proven architectural patterns
 
 ### Key Analysis Features Demonstrated
-- **Component Inventory**: Automated discovery of pipelines, data flows, datasets, and linked services
-- **Pattern Recognition**: Identification of staging layers, incremental loading, and error handling patterns
+- **Component Inventory**: Automated discovery of functions, triggers, bindings, and integration points
+- **Pattern Recognition**: Identification of Digital Enablement vs Change Feed patterns, Service Bus isolation, and CRM transaction management
 - **Gap Analysis**: Comparison against best practices and identification of improvement opportunities
-- **Implementation Roadmap**: Phased approach to architectural improvements
-- **Success Metrics**: Measurable outcomes and business value assessment
+- **Implementation Roadmap**: Phased approach to serverless architecture improvements
+- **Success Metrics**: Measurable outcomes for reliability, performance, and scalability
 
 ## Repository Structure
 
@@ -71,16 +76,24 @@ azure-analysis/
 │   ├── prompts/           # AI assistant prompts and instructions
 │   └── workflows/         # GitHub Actions for automation
 ├── standards/             # Best practices and methodologies
+│   ├── azure-functions-exploration-instructions.md    # Azure Functions analysis prompts
+│   ├── azure-functions-exploration-best-practices.md  # Azure Functions ADR generation
+│   ├── adf-exploration-instructions.md               # ADF analysis prompts
+│   └── adf-exploration-best-practices.md             # ADF ADR generation
 ├── templates/
 │   ├── adrs/             # ADR templates for different styles
 │   └── spikes/           # Technical spike templates
 ├── examples/
+│   ├── azure-functions/  # 🆕 Azure Functions analysis examples
+│   │   ├── ADR-Azure-Functions-Change-Feed-Digital-Enablement-Ecolab-001.md
+│   │   ├── ADR-Azure-Service-Bus-Integration-Patterns-Ecolab-002.md
+│   │   └── ADR-Dynamics-365-CRM-Integration-Patterns-Ecolab-003.md
 │   ├── adf/              # ADF pipeline analysis examples
 │   ├── aks/              # AKS cluster analysis examples
 │   └── synapse/          # Synapse workspace examples
 ├── docs/                 # Documentation and guides
 ├── scripts/              # Automation and utility scripts
-├── adr-toolkit/          # 🆕 ADR-Toolkit with client/partner branding
+├── adr-toolkit/          # ADR-Toolkit with client/partner branding
 │   ├── ADR-DOCX-Template-Guide.md    # DOCX template creation guide
 │   ├── Create-DOCX-Templates.md      # Template development instructions
 │   ├── Generate-Partner-ADR.ps1      # Main ADR generation script
@@ -91,7 +104,7 @@ azure-analysis/
 │   │   └── western-states/
 │   └── partners/                     # Partner-specific branding
 │       ├── accenture/
-│       ├── acornsoft/
+│       ├── acornsoft/                # Enhanced with Azure Functions template
 │       ├── avanade/
 │       └── elogic/
 └── README.md
@@ -105,6 +118,15 @@ cd azure-analysis
 ```
 
 ### 2. Choose Your Analysis Approach
+
+#### For Azure Functions Analysis
+```bash
+# Copy Azure Functions standards to your workspace
+cp -r standards/azure-functions-* /path/to/your/functions/workspace/.github/
+
+# Use the specialized Azure Functions exploration prompts
+# These include lessons learned from Ecolab.CRM.Azure.CDM analysis
+```
 
 #### For ADF Pipeline Analysis
 ```bash
@@ -178,6 +200,18 @@ The framework includes specialized AI assistant instructions that enable "Sherpa
 
 ## Usage Examples
 
+### Azure Functions Analysis
+```bash
+# Analyze function app architecture and generate technical ADR
+analyze-service --service azure-functions --app "MyFunctionApp" --style technical
+
+# Generate ADR for Service Bus integration patterns
+generate-adr --service azure-functions --focus "service-bus" --style architectural
+
+# Analyze CRM integration and transaction patterns
+generate-adr --service azure-functions --focus "crm-integration" --style implementation
+```
+
 ### ADF Pipeline Analysis
 ```bash
 # Analyze a pipeline and generate technical ADR
@@ -240,8 +274,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Repository Status
 
-- **Version**: 1.0.0
-- **Last Updated**: September 30, 2025
-- **Supported Services**: ADF, AKS, Synapse Analytics
+- **Version**: 1.1.0
+- **Last Updated**: October 1, 2025
+- **Supported Services**: Azure Functions, ADF, AKS, Synapse Analytics
 - **ADR Styles**: Technical, Business, Architectural, Implementation
 - **AI Integration**: Copilot, Continue.dev, CodeGPT compatible
+- **Key Features**: Ecolab.CRM.Azure.CDM analysis patterns, Acornsoft Azure Functions template, comprehensive Service Bus and CRM integration examples

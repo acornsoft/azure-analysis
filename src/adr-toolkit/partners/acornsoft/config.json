@@ -1,0 +1,87 @@
+{
+  "partner": "Acornsoft",
+  "code": "acornsoft",
+  "version": "1.1",
+  "documentStandards": {
+    "fontFamily": "Arial, sans-serif",
+    "primaryColor": "#2E8B57",
+    "secondaryColor": "#3CB371",
+    "headerStyle": "Green Header",
+    "footerText": "Acornsoft - Technology Solutions",
+    "confidentialityLevels": ["Public", "Internal", "Business Sensitive", "Acornsoft Confidential"],
+    "defaultClassification": "Acornsoft Confidential"
+  },
+  "requiredSections": [
+    "problemStatement",
+    "solutionOverview",
+    "implementationPlan",
+    "testingStrategy"
+  ],
+  "optionalSections": [
+    "performanceConsiderations",
+    "maintenancePlan",
+    "securityConsiderations",
+    "azureFunctionsPatterns"
+  ],
+  "metadataFields": [
+    "projectManager",
+    "technicalLead",
+    "qaLead",
+    "businessAnalyst",
+    "solutionArchitect",
+    "technicalArchitect",
+    "clientEngagementManager",
+    "deliveryLead"
+  ],
+  "azureFunctionsFields": [
+    "functionAppName",
+    "runtimeVersion",
+    "hostingPlan",
+    "triggerTypes",
+    "serviceBusConnections",
+    "crmIntegration",
+    "externalApis"
+  ],
+  "outputFormats": ["docx", "html", "pdf"],
+  "defaultTemplate": "acornsoft-template.docx",
+  "pandocOptions": {
+    "docx": ["--toc", "--toc-depth=2", "--reference-doc=acornsoft-template.docx"],
+    "html": ["--self-contained", "--css=acornsoft.css", "--toc", "--toc-depth=2"],
+    "pdf": ["--pdf-engine=pdflatex", "--toc", "--toc-depth=2"]
+  },
+  "validationRules": {
+    "solutionOverviewRequired": true,
+    "implementationPlanRequired": true,
+    "testingStrategyRequired": true,
+    "azureFunctionsValidation": {
+      "requireTriggerAnalysis": true,
+      "requireScalingAnalysis": true,
+      "requireErrorHandling": true
+    }
+  },
+  "approvalWorkflow": {
+    "technicalReview": true,
+    "peerReview": true,
+    "architectReview": true,
+    "approvalTimeout": "5 days"
+  },
+  "specializedTemplates": {
+    "azureFunctions": {
+      "template": "azure-functions-adr-template.md",
+      "requiredSections": [
+        "azureFunctionsPatterns",
+        "serviceBusIntegration",
+        "crmIntegration",
+        "performanceConsiderations"
+      ]
+    },
+    "cloudArchitecture": {
+      "template": "cloud-architecture-adr-template.md",
+      "requiredSections": [
+        "cloudPatterns",
+        "scalabilityAnalysis",
+        "securityConsiderations"
+      ]
+    }
+  }
+}

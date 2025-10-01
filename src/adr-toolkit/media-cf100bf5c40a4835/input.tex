@@ -1,0 +1,482 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\section{ADR 001: Change Feed and Digital Enablement
+Analysis}\label{adr-001-change-feed-and-digital-enablement-analysis}
+
+\textbf{Partner:} Accenture \textbf{Client:} Ecolab \textbf{Engagement:}
+Ecolab Change Feed and Digital Enablement Analysis
+\textbf{Confidentiality:} Accenture Confidential
+
+\subsection{Executive Summary}\label{executive-summary}
+
+\{2-3 sentence overview of the decision, its business impact, and
+recommended approach. This section is required for all Accenture ADRs.\}
+
+\subsection{Context and Problem
+Statement}\label{context-and-problem-statement}
+
+\{Describe the business context, technical challenge, and problem
+statement that motivated this architectural decision.\}
+
+\subsubsection{Business Context}\label{business-context}
+
+\{Explain the business drivers, objectives, and constraints that
+influence this decision.\}
+
+\subsubsection{Technical Context}\label{technical-context}
+
+\{Detail the technical environment, constraints, and requirements that
+must be considered.\}
+
+\subsubsection{Decision Drivers}\label{decision-drivers}
+
+\begin{itemize}
+\tightlist
+\item
+  \{Business driver 1 - e.g., cost optimization, time-to-market\}
+\item
+  \{Technical driver 1 - e.g., scalability, performance requirements\}
+\item
+  \{Compliance driver 1 - e.g., regulatory requirements, security
+  standards\}
+\item
+  \{Operational driver 1 - e.g., maintainability, monitoring needs\}
+\end{itemize}
+
+\subsection{Considered Options}\label{considered-options}
+
+\begin{itemize}
+\tightlist
+\item
+  \{Option 1 - Primary recommendation\}
+\item
+  \{Option 2 - Alternative approach\}
+\item
+  \{Option 3 - Conservative/minimal change approach\}
+\item
+  \{Additional options as needed\}
+\end{itemize}
+
+\subsection{Business Case}\label{business-case}
+
+\subsubsection{Cost-Benefit Analysis}\label{cost-benefit-analysis}
+
+\{Quantify the costs, benefits, and ROI for each option where
+applicable.\}
+
+\subsubsection{Risk-Reward Assessment}\label{risk-reward-assessment}
+
+\{Evaluate the risk profile and potential rewards for each approach.\}
+
+\subsection{Decision Outcome}\label{decision-outcome}
+
+\textbf{Chosen option:} \textbf{“\{Selected Option\}”}, because
+\{justification with reference to decision drivers and business case\}.
+
+\subsubsection{Rationale}\label{rationale}
+
+\{Detailed explanation of why this option best serves the business
+objectives and technical requirements.\}
+
+\subsection{Technical Architecture}\label{technical-architecture}
+
+\subsubsection{Solution Overview}\label{solution-overview}
+
+\{High-level technical architecture of the chosen solution.\}
+
+\subsubsection{Integration Points}\label{integration-points}
+
+\{Key integration points, dependencies, and interfaces.\}
+
+\subsubsection{Data Flow}\label{data-flow}
+
+\{Data flow diagrams and processing logic where applicable.\}
+
+\subsection{Pros and Cons of the
+Options}\label{pros-and-cons-of-the-options}
+
+\subsubsection{\{Option 1\}}\label{option-1}
+
+\{Description and context\}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Business Benefits}: \{Revenue impact, efficiency gains\}
+\item
+  \textbf{Technical Advantages}: \{Performance, scalability,
+  maintainability\}
+\item
+  \textbf{Good, because}: \{Additional positive factors\}
+\item
+  \textbf{Business Risks}: \{Revenue risk, operational impact\}
+\item
+  \textbf{Technical Challenges}: \{Complexity, learning curve,
+  dependencies\}
+\item
+  \textbf{Bad, because}: \{Additional negative factors\}
+\end{itemize}
+
+\subsubsection{\{Option 2\}}\label{option-2}
+
+\{Description and context\}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Business Benefits}: \{Revenue impact, efficiency gains\}
+\item
+  \textbf{Technical Advantages}: \{Performance, scalability,
+  maintainability\}
+\item
+  \textbf{Good, because}: \{Additional positive factors\}
+\item
+  \textbf{Business Risks}: \{Revenue risk, operational impact\}
+\item
+  \textbf{Technical Challenges}: \{Complexity, learning curve,
+  dependencies\}
+\item
+  \textbf{Bad, because}: \{Additional negative factors\}
+\end{itemize}
+
+\subsubsection{\{Option 3\}}\label{option-3}
+
+\{Description and context\}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Business Benefits}: \{Revenue impact, efficiency gains\}
+\item
+  \textbf{Technical Advantages}: \{Performance, scalability,
+  maintainability\}
+\item
+  \textbf{Good, because}: \{Additional positive factors\}
+\item
+  \textbf{Business Risks}: \{Revenue risk, operational impact\}
+\item
+  \textbf{Technical Challenges}: \{Complexity, learning curve,
+  dependencies\}
+\item
+  \textbf{Bad, because}: \{Additional negative factors\}
+\end{itemize}
+
+\subsection{Consequences}\label{consequences}
+
+\subsection{Global Standards}\label{global-standards}
+
+\{Content for globalStandards\}
+
+\subsection{Chemical Handling}\label{chemical-handling}
+
+\{Content for chemicalHandling\}
+
+\subsection{Environmental Impact}\label{environmental-impact}
+
+\{Content for environmentalImpact\}
+
+\subsection{Safety Standards}\label{safety-standards}
+
+\{Content for safetyStandards\}
+
+\subsection{Regulatory Compliance}\label{regulatory-compliance}
+
+\{Content for regulatoryCompliance\}
+
+\subsubsection{Positive Consequences}\label{positive-consequences}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Business Impact}: \{Revenue, efficiency, competitive
+  advantage\}
+\item
+  \textbf{Technical Impact}: \{Performance, scalability,
+  maintainability\}
+\item
+  \textbf{Operational Impact}: \{Supportability, monitoring, incident
+  response\}
+\end{itemize}
+
+\subsubsection{Negative Consequences}\label{negative-consequences}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Business Impact}: \{Cost implications, timeline delays\}
+\item
+  \textbf{Technical Impact}: \{Complexity, technical debt,
+  dependencies\}
+\item
+  \textbf{Operational Impact}: \{Training requirements, process
+  changes\}
+\end{itemize}
+
+\subsubsection{Risk Mitigation}\label{risk-mitigation}
+
+\{Strategies to address identified risks and negative consequences.\}
+
+\subsection{Implementation Roadmap}\label{implementation-roadmap}
+
+\subsubsection{Phase 1: Foundation}\label{phase-1-foundation}
+
+\{Objectives, deliverables, timeline\}
+
+\subsubsection{Phase 2: Implementation}\label{phase-2-implementation}
+
+\{Objectives, deliverables, timeline\}
+
+\subsubsection{Phase 3: Validation}\label{phase-3-validation}
+
+\{Objectives, deliverables, timeline\}
+
+\subsubsection{Phase 4: Deployment}\label{phase-4-deployment}
+
+\{Objectives, deliverables, timeline\}
+
+\subsection{Risk Assessment}\label{risk-assessment}
+
+\subsubsection{High-Risk Items}\label{high-risk-items}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Risk 1}: \{Description\}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Impact}: \{Business/technical/operational impact\}
+  \item
+    \textbf{Probability}: \{High/Medium/Low\}
+  \item
+    \textbf{Mitigation}: \{Specific mitigation strategy\}
+  \end{itemize}
+\item
+  \textbf{Risk 2}: \{Description\}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Impact}: \{Business/technical/operational impact\}
+  \item
+    \textbf{Probability}: \{High/Medium/Low\}
+  \item
+    \textbf{Mitigation}: \{Specific mitigation strategy\}
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Risk Monitoring}\label{risk-monitoring}
+
+\{How risks will be monitored and managed throughout implementation.\}
+
+\subsection{Stakeholder Impact}\label{stakeholder-impact}
+
+\subsubsection{Impacted Stakeholders}\label{impacted-stakeholders}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Business Stakeholders}: \{Impact and communication plan\}
+\item
+  \textbf{Technical Teams}: \{Impact and training requirements\}
+\item
+  \textbf{Operations Teams}: \{Impact and process changes\}
+\item
+  \textbf{End Users}: \{Impact and change management\}
+\end{itemize}
+
+\subsubsection{Communication Plan}\label{communication-plan}
+
+\{How stakeholders will be informed and engaged throughout the
+process.\}
+
+\subsection{Testing Strategy}\label{testing-strategy}
+
+\subsubsection{Testing Approach}\label{testing-approach}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Unit Testing}: \{Scope and approach\}
+\item
+  \textbf{Integration Testing}: \{Scope and approach\}
+\item
+  \textbf{User Acceptance Testing}: \{Scope and approach\}
+\item
+  \textbf{Performance Testing}: \{Scope and approach\}
+\end{itemize}
+
+\subsubsection{Success Criteria}\label{success-criteria}
+
+\{Specific, measurable criteria for validating the implementation.\}
+
+\subsection{Rollback Plan}\label{rollback-plan}
+
+\subsubsection{Rollback Triggers}\label{rollback-triggers}
+
+\{Conditions that would trigger a rollback decision.\}
+
+\subsubsection{Rollback Procedure}\label{rollback-procedure}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Step 1}: \{Specific rollback action\}
+\item
+  \textbf{Step 2}: \{Specific rollback action\}
+\item
+  \textbf{Validation}: \{How to verify rollback success\}
+\end{enumerate}
+
+\subsubsection{Rollback Timeline}\label{rollback-timeline}
+
+\{Expected duration and resource requirements for rollback.\}
+
+\subsection{Success Metrics}\label{success-metrics}
+
+\subsubsection{Business Metrics}\label{business-metrics}
+
+\begin{itemize}
+\tightlist
+\item
+  \{Metric 1\}: \{Target value, measurement approach\}
+\item
+  \{Metric 2\}: \{Target value, measurement approach\}
+\end{itemize}
+
+\subsubsection{Technical Metrics}\label{technical-metrics}
+
+\begin{itemize}
+\tightlist
+\item
+  \{Metric 1\}: \{Target value, measurement approach\}
+\item
+  \{Metric 2\}: \{Target value, measurement approach\}
+\end{itemize}
+
+\subsubsection{Operational Metrics}\label{operational-metrics}
+
+\begin{itemize}
+\tightlist
+\item
+  \{Metric 1\}: \{Target value, measurement approach\}
+\item
+  \{Metric 2\}: \{Target value, measurement approach\}
+\end{itemize}
+
+\subsection{More Information}\label{more-information}
+
+\{Additional context, references, and supporting documentation\}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Related Documents}: \{Links to requirements, specifications,
+  architecture diagrams\}
+\item
+  \textbf{Assumptions}: \{Key assumptions that underpin this decision\}
+\item
+  \textbf{Dependencies}: \{External dependencies and prerequisites\}
+\item
+  \textbf{Future Considerations}: \{When this decision should be
+  revisited\}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Accenture Metadata}\label{accenture-metadata}
+
+\textbf{Status}: \{proposed \textbar{} accepted \textbar{} rejected
+\textbar{} deprecated \textbar{} superseded\}
+
+\textbf{Date}: \{YYYY-MM-DD\}
+
+\textbf{Accenture Practice}: \{Cloud \textbar{} Data \& Analytics
+\textbar{} Security \textbar{} Infrastructure \textbar{} Applications\}
+
+\textbf{Client Engagement Manager}: \{Name\}
+
+\textbf{Delivery Lead}: \{Name\}
+
+\textbf{Solution Architect}: \{Name\}
+
+\textbf{Technical Architect}: \{Name\}
+
+\textbf{Project Manager}: \{Name\}
+
+\textbf{Decision Makers}: * \{Name, Role\} * \{Name, Role\}
+
+\textbf{Consulted}: * \{Name, Role - Subject Matter Expert\} * \{Name,
+Role - Stakeholder\}
+
+\textbf{Informed}: * \{Name, Role - Team Member\} * \{Name, Role -
+Stakeholder\}
+
+\textbf{Supersedes}: \{ADR-XXXX if applicable\}
+
+\textbf{Superseded by}: \{ADR-XXXX if applicable\}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\emph{Accenture ADR Template v1.0 \textbar{} Based on MADR 4.0.0
+\textbar{} Accenture Confidential}
+
+\end{document}

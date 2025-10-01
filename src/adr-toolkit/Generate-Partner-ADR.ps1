@@ -15,7 +15,7 @@ param(
     [string]$Title,
 
     [Parameter(Mandatory=$false)]
-    [string]$OutputPath = (Join-Path $ProjectDirectory "Analysis\"),
+    [string]$OutputPath,
 
     [Parameter(Mandatory=$false)]
     [switch]$GenerateAllFormats,
@@ -31,8 +31,30 @@ param(
     [string]$Status = "proposed",
 
     [Parameter(Mandatory=$false)]
-    [string]$ProjectDirectory = $PWD.Path
+    [string]$ProjectDirectory = (Get-Location).Path,
+
+    [Parameter(Mandatory=$false)]
+    [string]$TargetFolder = "",
+
+    [Parameter(Mandatory=$false)]
+    [switch]$GenerateDiagrams,
+
+    [Parameter(Mandatory=$false)]
+    [string[]]$DiagramTemplates,
+
+    [Parameter(Mandatory=$false)]
+    [string]$ImagesFolder = "images"
 )
+
+# Adjust ProjectDirectory if TargetFolder is specified
+if ($TargetFolder) {
+    $ProjectDirectory = Join-Path $ProjectDirectory $TargetFolder
+}
+
+# Set default OutputPath if not specified
+if (-not $OutputPath) {
+    $OutputPath = Join-Path $ProjectDirectory "Analysis\$Partner"
+}
 
 # Get the toolkit directory (where this script is located)
 $toolkitDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -206,7 +228,7 @@ function Generate-Document {
     # Add format-specific options
     switch ($Format) {
         "docx" {
-            $pandocArgs += @("--toc", "--toc-depth=3", "--number-sections")
+            $pandocArgs += @("--toc", "--toc-depth=3")
 
             # Always try to use reference document for DOCX formatting
             # Check project directory first, then toolkit
@@ -239,6 +261,14 @@ function Generate-Document {
                 "-V", "fontsize=11pt",
                 "-V", "fontfamily=arial"
             )
+
+            # Add resource path for images if they exist
+            $imagesPath = Join-Path $OutputPath $ImagesFolder
+            if (Test-Path $imagesPath) {
+                $pandocArgs += "--resource-path=$imagesPath"
+                # For DOCX, also add extract-media to handle images properly
+                $pandocArgs += "--extract-media=$imagesPath"
+            }
         }
         "html" {
             # Check project directory first, then toolkit
@@ -254,6 +284,12 @@ function Generate-Document {
                 $pandocArgs += @("--css=$partnerCss", "--embed-resources", "--standalone")
             } else {
                 $pandocArgs += @("--css=$defaultCss", "--embed-resources", "--standalone")
+            }
+
+            # Add resource path for images if they exist
+            $imagesPath = Join-Path $OutputPath $ImagesFolder
+            if (Test-Path $imagesPath) {
+                $pandocArgs += "--resource-path=$imagesPath"
             }
         }
         "pdf" {
@@ -321,8 +357,128 @@ function Test-ADRCompliance {
     return $issues
 }
 
+# Function to generate Mermaid diagram files
+function New-MermaidFiles {
+    param(
+        [string]$OutputPath,
+        [string[]]$DiagramTemplates,
+        [string]$ImagesFolder,
+        [string]$AdrTitle,
+        [string]$Client,
+        [int]$AdrNumber
+    )
+
+    $imagesPath = Join-Path $OutputPath $ImagesFolder
+    if (!(Test-Path $imagesPath)) {
+        New-Item -ItemType Directory -Path $imagesPath -Force | Out-Null
+        Write-Host "Created images directory: $imagesPath" -ForegroundColor Blue
+    }
+
+    $generatedFiles = @()
+
+    # If no specific templates provided, look for default diagram templates
+    if (-not $DiagramTemplates -or $DiagramTemplates.Count -eq 0) {
+        # Look for diagram templates in Partner folder under images, then toolkit diagrams
+        $partnerImages = Join-Path $OutputPath $ImagesFolder
+        $toolkitDiagrams = Join-Path $toolkitDir "diagrams"
+
+        $diagramPaths = @()
+        if (Test-Path $partnerImages) {
+            $diagramPaths += Get-ChildItem $partnerImages -Filter "*.mmd" -ErrorAction SilentlyContinue
+        }
+        if (Test-Path $toolkitDiagrams) {
+            $diagramPaths += Get-ChildItem $toolkitDiagrams -Filter "*.mmd" -ErrorAction SilentlyContinue
+        }
+
+        $DiagramTemplates = $diagramPaths | Select-Object -ExpandProperty FullName
+    }
+
+    foreach ($templatePath in $DiagramTemplates) {
+        if (Test-Path $templatePath) {
+            $templateName = [System.IO.Path]::GetFileNameWithoutExtension($templatePath)
+            $outputFileName = "$templateName-$Client-$($AdrNumber.ToString('000')).mmd"
+            $outputFilePath = Join-Path $imagesPath $outputFileName
+
+            # Copy template and apply replacements
+            $diagramContent = Get-Content $templatePath -Raw
+
+            # Apply basic replacements
+            $diagramContent = $diagramContent -replace "\{ADR Title\}", $AdrTitle
+            $diagramContent = $diagramContent -replace "\{Client\}", $Client
+            $diagramContent = $diagramContent -replace "\{ADR Number\}", $AdrNumber.ToString("000")
+
+            $diagramContent | Out-File $outputFilePath -Encoding UTF8
+            $generatedFiles += $outputFilePath
+
+            Write-Host "Generated Mermaid diagram: $outputFilePath" -ForegroundColor Green
+        } else {
+            Write-Warning "Diagram template not found: $templatePath"
+        }
+    }
+
+    return $generatedFiles
+}
+
+# Function to convert Mermaid files to images
+function Convert-MermaidToImages {
+    param(
+        [string[]]$MermaidFiles,
+        [string]$ImagesFolder
+    )
+
+    $generatedImages = @()
+
+    # Check if mmdc (Mermaid CLI) is available
+    $mmdcCommand = Get-Command mmdc -ErrorAction SilentlyContinue
+    if (-not $mmdcCommand) {
+        Write-Warning "Mermaid CLI (mmdc) not found. Please install it with: npm install -g @mermaid-js/mermaid-cli"
+        Write-Warning "Skipping image generation. You can manually convert .mmd files to images later."
+        return $generatedImages
+    }
+
+    foreach ($mmdFile in $MermaidFiles) {
+        if (Test-Path $mmdFile) {
+            $baseName = [System.IO.Path]::GetFileNameWithoutExtension($mmdFile)
+            $directory = [System.IO.Path]::GetDirectoryName($mmdFile)
+
+            $svgFile = Join-Path $directory "$baseName.svg"
+            $pngFile = Join-Path $directory "$baseName.png"
+
+            # Generate SVG
+            try {
+                & mmdc -i $mmdFile -o $svgFile -t dark -b transparent
+                if (Test-Path $svgFile) {
+                    $generatedImages += $svgFile
+                    Write-Host "Generated SVG: $svgFile" -ForegroundColor Green
+                }
+            } catch {
+                Write-Warning "Failed to generate SVG for $mmdFile : $_"
+            }
+
+            # Generate PNG
+            try {
+                & mmdc -i $mmdFile -o $pngFile -t dark -b transparent
+                if (Test-Path $pngFile) {
+                    $generatedImages += $pngFile
+                    Write-Host "Generated PNG: $pngFile" -ForegroundColor Green
+                }
+            } catch {
+                Write-Warning "Failed to generate PNG for $mmdFile : $_"
+            }
+        }
+    }
+
+    return $generatedImages
+}
+
 # Main script logic
 Write-Host "Generating ADR for $Partner + $Client..." -ForegroundColor Cyan
+
+# Ensure output directory exists
+if (!(Test-Path $OutputPath)) {
+    New-Item -ItemType Directory -Path $OutputPath -Force | Out-Null
+    Write-Host "Created output directory: $OutputPath" -ForegroundColor Blue
+}
 
 # Load configurations
 $partnerConfig = Get-Configuration $partnerConfigPath
@@ -381,8 +537,10 @@ $mergedTemplate = Merge-Templates `
     -Replacements $replacements
 
 # Create output filename
-$safeTitle = $Title -replace "[^a-zA-Z0-9]", "-"
-$outputBaseName = "ADR-$($adrNumber.ToString('000'))-$safeTitle-$Partner-$Client"
+# Clean the title by removing common prefixes like "ADR:" to avoid duplicate prefixes
+$cleanTitle = $Title -replace "^ADR:\s*", ""
+$safeTitle = $cleanTitle -replace "[^a-zA-Z0-9]", "-"
+$outputBaseName = "ADR-$safeTitle-$Client-$($adrNumber.ToString('000'))"
 if ($ProjectName) {
     $outputBaseName += "-$ProjectName"
 }
@@ -394,10 +552,70 @@ if ($validationIssues) {
     $validationIssues | ForEach-Object { Write-Warning "  - $_" }
 }
 
+# Display planned output
+Write-Host "`nPlanned Output:" -ForegroundColor Cyan
+Write-Host "Output Directory: $OutputPath" -ForegroundColor White
+Write-Host "Files to be created:" -ForegroundColor White
+$templateOutputPath = Join-Path $OutputPath "$outputBaseName.md"
+Write-Host "  - $templateOutputPath" -ForegroundColor White
+
+if ($GenerateDiagrams) {
+    Write-Host "  - Diagrams in $($ImagesFolder) folder:" -ForegroundColor White
+    if ($DiagramTemplates -and $DiagramTemplates.Count -gt 0) {
+        foreach ($template in $DiagramTemplates) {
+            $templateName = [System.IO.Path]::GetFileNameWithoutExtension($template)
+            Write-Host "    - $templateName-$Client-$($adrNumber.ToString('000')).mmd" -ForegroundColor White
+            Write-Host "    - $templateName-$Client-$($adrNumber.ToString('000')).svg" -ForegroundColor White
+            Write-Host "    - $templateName-$Client-$($adrNumber.ToString('000')).png" -ForegroundColor White
+        }
+    } else {
+        Write-Host "    - (Auto-discovered diagram templates)" -ForegroundColor White
+    }
+}
+
+$formats = if ($GenerateAllFormats) {
+    $partnerConfig.outputFormats
+} else {
+    @("docx")  # Default to DOCX
+}
+
+foreach ($format in $formats) {
+    $outputFilePath = Join-Path $OutputPath "$outputBaseName.$format"
+    Write-Host "  - $outputFilePath" -ForegroundColor White
+}
+
+# Prompt for confirmation
+$confirmation = Read-Host "`nProceed with ADR generation? (Y/n)"
+if ($confirmation -ne 'y' -and $confirmation -ne 'Y' -and $confirmation -ne '') {
+    Write-Host "ADR generation cancelled." -ForegroundColor Yellow
+    exit 0
+}
+
 # Save merged template
 $templateOutputPath = Join-Path $OutputPath "$outputBaseName.md"
 $mergedTemplate | Out-File $templateOutputPath -Encoding UTF8
 Write-Host "Generated ADR template: $templateOutputPath" -ForegroundColor Green
+
+# Generate Mermaid diagrams if requested
+$mermaidFiles = @()
+$generatedImages = @()
+if ($GenerateDiagrams) {
+    Write-Host "Generating Mermaid diagrams..." -ForegroundColor Cyan
+
+    $mermaidFiles = New-MermaidFiles `
+        -OutputPath $OutputPath `
+        -DiagramTemplates $DiagramTemplates `
+        -ImagesFolder $ImagesFolder `
+        -AdrTitle $Title `
+        -Client $Client `
+        -AdrNumber $adrNumber
+
+    if ($mermaidFiles.Count -gt 0) {
+        $generatedImages = Convert-MermaidToImages `
+            -MermaidFiles $mermaidFiles `
+            -ImagesFolder $ImagesFolder
+    }
+}
 
 # Generate documents in requested formats
 $formats = if ($GenerateAllFormats) {
@@ -425,6 +643,16 @@ Get-ChildItem "$OutputPath\$outputBaseName.*" -ErrorAction SilentlyContinue | Fo
     Write-Host "  - $($_.Name)" -ForegroundColor White
 }
 
+if ($GenerateDiagrams) {
+    Write-Host "Generated diagrams:" -ForegroundColor Cyan
+    $imagesPath = Join-Path $OutputPath $ImagesFolder
+    if (Test-Path $imagesPath) {
+        Get-ChildItem $imagesPath -ErrorAction SilentlyContinue | ForEach-Object {
+            Write-Host "  - $($ImagesFolder)/$($_.Name)" -ForegroundColor White
+        }
+    }
+}
+
 if ($validationIssues) {
     Write-Host "`nPlease review and address the validation issues listed above." -ForegroundColor Yellow
 }
@@ -433,5 +661,10 @@ if ($validationIssues) {
 Write-Host "`nNext Steps:" -ForegroundColor Cyan
 Write-Host "1. Edit the generated .md file with your specific content" -ForegroundColor White
 Write-Host "2. Replace all {placeholder} text with actual values" -ForegroundColor White
-Write-Host "3. Re-run generation to update output documents" -ForegroundColor White
+if ($GenerateDiagrams) {
+    Write-Host "3. Review and customize generated diagram files in the $($ImagesFolder) folder" -ForegroundColor White
+    Write-Host "4. Re-run generation to update output documents with diagram changes" -ForegroundColor White
+} else {
+    Write-Host "3. Re-run generation to update output documents" -ForegroundColor White
+}
 Write-Host "4. Submit for partner/client approval as required" -ForegroundColor White

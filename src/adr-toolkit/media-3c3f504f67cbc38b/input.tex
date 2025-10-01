@@ -1,0 +1,116 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\section{ADR 001: Test PDF
+Generation}\label{adr-001-test-pdf-generation}
+
+\textbf{Status:} proposed\\
+\textbf{Date:} 2025-10-01
+
+\subsection{Context and Problem
+Statement}\label{context-and-problem-statement}
+
+\{Describe the context and problem statement that is being addressed by
+this decision.\}
+
+\subsection{Decision Drivers}\label{decision-drivers}
+
+\{List the factors that influence and drive the decision.\}
+
+\subsection{Considered Options}\label{considered-options}
+
+\{List the options that were considered to address the problem.\}
+
+\subsection{Decision Outcome}\label{decision-outcome}
+
+\subsubsection{Chosen Option: “\{Option
+Name\}”}\label{chosen-option-option-name}
+
+\{Describe the chosen option and why it was selected.\}
+
+\subsection{Positive Consequences}\label{positive-consequences}
+
+\{List the positive consequences of this decision.\}
+
+\subsection{Negative Consequences}\label{negative-consequences}
+
+\{List the negative consequences of this decision.\}
+
+\subsection{Validation}\label{validation}
+
+\{Describe how this decision will be validated and measured for
+success.\}
+
+\subsection{Implementation Plan}\label{implementation-plan}
+
+\{Describe the implementation plan for this decision.\}
+
+\subsection{Risks and Mitigation}\label{risks-and-mitigation}
+
+\{Describe any risks associated with this decision and how they will be
+mitigated.\}
+
+\subsection{Related ADRs}\label{related-adrs}
+
+\{List any related ADRs that are affected by or affect this decision.\}
+
+\subsection{Notes}\label{notes}
+
+\{Any additional notes or considerations.\}
+
+\end{document}
