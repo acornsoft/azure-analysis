@@ -25,7 +25,7 @@ param(
 
     [Parameter(Mandatory=$false)]
     [ValidateSet("requirements", "overview", "deep-dive")]
-    [string]$Flavor,
+    [string]$Flavor = "overview",
 
     [Parameter(Mandatory=$false)]
     [string]$ProjectName = "",
@@ -50,7 +50,10 @@ param(
     [string]$ImagesFolder = "images",
 
     [Parameter(Mandatory=$false)]
-    [switch]$SkipStructureSetup
+    [switch]$SkipStructureSetup,
+
+    [Parameter(Mandatory=$true)]
+    [string]$ResearchArea
 )
 
 # Adjust ProjectDirectory if TargetFolder is specified
@@ -58,9 +61,9 @@ if ($TargetFolder) {
     $ProjectDirectory = Join-Path $ProjectDirectory $TargetFolder
 }
 
-# Set default OutputPath - Markdown goes to docs/Partner, generated docs to docs/Partner/[Partner]
+# Set default OutputPath - Generated docs go to docs/Analysis/[Partner]
 if (-not $OutputPath) {
-    $OutputPath = Join-Path $ProjectDirectory "docs\Partner\$Partner"
+    $OutputPath = Join-Path $ProjectDirectory "docs\Analysis\$Partner"
 }
 
 # Get the toolkit directory (where this script is located)
@@ -86,17 +89,19 @@ if (!(Test-Path $clientDir)) {
 function New-AdrStructure {
     param(
         [string]$ProjectRoot,
-        [string[]]$PartnerList
+        [string[]]$PartnerList,
+        [string]$ResearchArea
     )
 
-    $analysisPath = Join-Path $ProjectRoot "docs"
-    $partnerPath = Join-Path $analysisPath "Partner"
+    $analysisPath = Join-Path $ProjectRoot "docs\Analysis"
+    $researchPath = Join-Path $analysisPath $ResearchArea
+    $partnerPath = $analysisPath
 
     # Create base directories
-    $directories = @($analysisPath, $partnerPath)
+    $directories = @($analysisPath, $researchPath)
 
     foreach ($partner in $PartnerList) {
-        $partnerSubPath = Join-Path $partnerPath $partner
+        $partnerSubPath = Join-Path $analysisPath $partner
         $directories += $partnerSubPath
     }
 
@@ -118,6 +123,7 @@ function New-AdrStructure {
 
     return @{
         AnalysisPath = $analysisPath
+        ResearchPath = $researchPath
         PartnerPath = $partnerPath
         ImagesPath = $imagesPath
     }
@@ -125,11 +131,11 @@ function New-AdrStructure {
 
 # Configuration paths - check project directory first, then toolkit
 # This allows projects to override templates while using toolkit as base
-$projectPartnerConfig = Join-Path $ProjectDirectory "docs\partners\$($Partner.ToLower())\config.json"
+$projectPartnerConfig = Join-Path $ProjectDirectory "docs\Analysis\partners\$($Partner.ToLower())\config.json"
 $toolkitPartnerConfig = Join-Path $toolkitDir "partners\$($Partner.ToLower())\config.json"
 $partnerConfigPath = if (Test-Path $projectPartnerConfig) { $projectPartnerConfig } else { $toolkitPartnerConfig }
 
-$projectClientConfig = Join-Path $ProjectDirectory "docs\clients\$($Client.ToLower().Replace('-', '-'))\config.json"
+$projectClientConfig = Join-Path $ProjectDirectory "docs\Analysis\clients\$($Client.ToLower().Replace('-', '-'))\config.json"
 $toolkitClientConfig = Join-Path $toolkitDir "clients\$($Client.ToLower().Replace('-', '-'))\config.json"
 $clientConfigPath = if (Test-Path $projectClientConfig) { $projectClientConfig } else { $toolkitClientConfig }
 
@@ -137,21 +143,21 @@ $clientConfigPath = if (Test-Path $projectClientConfig) { $projectClientConfig }
 $adrTypeTemplatePaths = @()
 foreach ($type in $Type) {
     $flavorPath = if ($Flavor) { "/$Flavor" } else { "" }
-    $projectAdrTypeTemplate = Join-Path $ProjectDirectory "docs\types\$type$flavorPath\template.md"
+    $projectAdrTypeTemplate = Join-Path $ProjectDirectory "docs\Analysis\types\$type$flavorPath\template.md"
     $toolkitAdrTypeTemplate = Join-Path $toolkitDir "types\$type$flavorPath\template.md"
     $adrTypeTemplatePath = if (Test-Path $projectAdrTypeTemplate) { $projectAdrTypeTemplate } else { $toolkitAdrTypeTemplate }
     $adrTypeTemplatePaths += $adrTypeTemplatePath
 }
 
-$projectPartnerTemplate = Join-Path $ProjectDirectory "docs\partners\$($Partner.ToLower())\templates\adr-template.md"
+$projectPartnerTemplate = Join-Path $ProjectDirectory "docs\Analysis\partners\$($Partner.ToLower())\templates\adr-template.md"
 $toolkitPartnerTemplate = Join-Path $toolkitDir "partners\$($Partner.ToLower())\templates\adr-template.md"
 $partnerTemplatePath = if (Test-Path $projectPartnerTemplate) { $projectPartnerTemplate } else { $toolkitPartnerTemplate }
 
-$projectClientTemplate = Join-Path $ProjectDirectory "docs\clients\$($Client.ToLower().Replace('-', '-'))\templates\adr-template.md"
+$projectClientTemplate = Join-Path $ProjectDirectory "docs\Analysis\clients\$($Client.ToLower().Replace('-', '-'))\templates\adr-template.md"
 $toolkitClientTemplate = Join-Path $toolkitDir "clients\$($Client.ToLower().Replace('-', '-'))\templates\adr-template.md"
 $clientTemplatePath = if (Test-Path $projectClientTemplate) { $projectClientTemplate } else { $toolkitClientTemplate }
 
-$projectBaseTemplate = Join-Path $ProjectDirectory "docs\ADR-Template.md"
+$projectBaseTemplate = Join-Path $ProjectDirectory "docs\Analysis\ADR-Template.md"
 $toolkitBaseTemplate = Join-Path $toolkitDir "ADR-Template.md"
 $baseTemplatePath = if (Test-Path $projectBaseTemplate) { $projectBaseTemplate } else { $toolkitBaseTemplate }
 
@@ -397,11 +403,17 @@ function Generate-Document {
 
             # Always try to use reference document for DOCX formatting
             # Check project directory first, then toolkit
-            $projectPartnerTemplateDoc = Join-Path $ProjectDirectory "docs\partners\$($Partner.ToLower())\templates\$($Partner.ToLower())-template.docx"
+            $projectPartnerTemplateDoc = Join-Path $ProjectDirectory "docs\Analysis\partners\$($Partner.ToLower())\templates\$($Partner.ToLower())-template.docx"
+            if (-not (Test-Path $projectPartnerTemplateDoc)) {
+                $projectPartnerTemplateDoc = Join-Path $ProjectDirectory "Analysis\partners\$($Partner.ToLower())\templates\$($Partner.ToLower())-template.docx"
+            }
             $toolkitPartnerTemplateDoc = Join-Path $toolkitDir "partners\$($Partner.ToLower())\templates\$($Partner.ToLower())-template.docx"
             $partnerTemplateDoc = if (Test-Path $projectPartnerTemplateDoc) { $projectPartnerTemplateDoc } else { $toolkitPartnerTemplateDoc }
 
-            $projectClientTemplateDoc = Join-Path $ProjectDirectory "docs\clients\$($Client.ToLower().Replace('-', '-'))\templates\$($Client.ToLower().Replace('-', '-'))-template.docx"
+            $projectClientTemplateDoc = Join-Path $ProjectDirectory "docs\Analysis\clients\$($Client.ToLower().Replace('-', '-'))\templates\$($Client.ToLower().Replace('-', '-'))-template.docx"
+            if (-not (Test-Path $projectClientTemplateDoc)) {
+                $projectClientTemplateDoc = Join-Path $ProjectDirectory "Analysis\clients\$($Client.ToLower().Replace('-', '-'))\templates\$($Client.ToLower().Replace('-', '-'))-template.docx"
+            }
             $toolkitClientTemplateDoc = Join-Path $toolkitDir "clients\$($Client.ToLower().Replace('-', '-'))\templates\$($Client.ToLower().Replace('-', '-'))-template.docx"
             $clientTemplateDoc = if (Test-Path $projectClientTemplateDoc) { $projectClientTemplateDoc } else { $toolkitClientTemplateDoc }
 
@@ -437,11 +449,17 @@ function Generate-Document {
         }
         "html" {
             # Check project directory first, then toolkit
-            $projectPartnerCss = Join-Path $ProjectDirectory "docs\partners\$($Partner.ToLower())\styles\$($Partner.ToLower()).css"
+            $projectPartnerCss = Join-Path $ProjectDirectory "docs\Analysis\partners\$($Partner.ToLower())\styles\$($Partner.ToLower()).css"
+            if (-not (Test-Path $projectPartnerCss)) {
+                $projectPartnerCss = Join-Path $ProjectDirectory "Analysis\partners\$($Partner.ToLower())\styles\$($Partner.ToLower()).css"
+            }
             $toolkitPartnerCss = Join-Path $toolkitDir "partners\$($Partner.ToLower())\styles\$($Partner.ToLower()).css"
             $partnerCss = if (Test-Path $projectPartnerCss) { $projectPartnerCss } else { $toolkitPartnerCss }
 
-            $projectDefaultCss = Join-Path $ProjectDirectory "docs\adr-styles.css"
+            $projectDefaultCss = Join-Path $ProjectDirectory "docs\Analysis\adr-styles.css"
+            if (-not (Test-Path $projectDefaultCss)) {
+                $projectDefaultCss = Join-Path $ProjectDirectory "Analysis\adr-styles.css"
+            }
             $toolkitDefaultCss = Join-Path $toolkitDir "adr-styles.css"
             $defaultCss = if (Test-Path $projectDefaultCss) { $projectDefaultCss } else { $toolkitDefaultCss }
 
@@ -641,11 +659,11 @@ $typeList = $Type -join ", "
 Write-Host "Generating $typeList ADR for $Partner + $Client..." -ForegroundColor Cyan
 
 # Set up project structure if not skipped
-$partnerPath = Join-Path $ProjectDirectory "docs\Partner"
+$partnerPath = Join-Path $ProjectDirectory "docs\Analysis\$ResearchArea"
 
 if (-not $SkipStructureSetup) {
     Write-Host "Setting up project structure..." -ForegroundColor Cyan
-    $structure = New-AdrStructure -ProjectRoot $ProjectDirectory -PartnerList @($Partner)
+    $structure = New-AdrStructure -ProjectRoot $ProjectDirectory -PartnerList @($Partner) -ResearchArea $ResearchArea
     $partnerPath = $structure.PartnerPath
 }
 
@@ -670,7 +688,7 @@ if (-not $clientConfig) {
 }
 
 # Generate ADR number (simple increment)
-$adrNumber = Get-ChildItem (Join-Path $ProjectDirectory "docs\ADR-*.md") -ErrorAction SilentlyContinue |
+$adrNumber = Get-ChildItem (Join-Path $ProjectDirectory "docs\Analysis\$ResearchArea\ADR-*.md") -ErrorAction SilentlyContinue |
     Where-Object { $_.Name -match "ADR-(\d+)-" } |
     ForEach-Object { [int]($matches[1]) } |
     Sort-Object -Descending |
