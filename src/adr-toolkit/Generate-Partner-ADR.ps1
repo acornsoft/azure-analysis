@@ -1,6 +1,7 @@
 # Partner-Client ADR Generation Script
 # Generates customized ADR documents for specific partner-client combinations
 # This script can be called from any project directory and uses the central ADR toolkit
+# Automatically creates the required Analysis/Partner structure if it doesn't exist
 
 param(
     [Parameter(Mandatory=$true)]
@@ -12,6 +13,10 @@ param(
     [string]$Client,
 
     [Parameter(Mandatory=$true)]
+    [ValidateSet("standard", "adf", "func", "apim", "kv", "logic", "sbns", "sbq", "sbt", "sbts", "aa", "appi", "ag", "dcr", "log", "mg", "rg", "app", "asp", "vm", "vmss", "stapp")]
+    [string[]]$Type,
+
+    [Parameter(Mandatory=$true)]
     [string]$Title,
 
     [Parameter(Mandatory=$false)]
@@ -21,7 +26,8 @@ param(
     [switch]$GenerateAllFormats,
 
     [Parameter(Mandatory=$false)]
-    [switch]$UseCustomTemplate,
+    [ValidateSet("requirements", "overview", "deep-dive")]
+    [string]$Flavor,
 
     [Parameter(Mandatory=$false)]
     [string]$ProjectName = "",
@@ -43,7 +49,10 @@ param(
     [string[]]$DiagramTemplates,
 
     [Parameter(Mandatory=$false)]
-    [string]$ImagesFolder = "images"
+    [string]$ImagesFolder = "images",
+
+    [Parameter(Mandatory=$false)]
+    [switch]$SkipStructureSetup
 )
 
 # Adjust ProjectDirectory if TargetFolder is specified
@@ -51,13 +60,54 @@ if ($TargetFolder) {
     $ProjectDirectory = Join-Path $ProjectDirectory $TargetFolder
 }
 
-# Set default OutputPath if not specified
+# Set default OutputPath - Markdown goes to Analysis/Partner, generated docs to Analysis/Partner/[Partner]
 if (-not $OutputPath) {
-    $OutputPath = Join-Path $ProjectDirectory "Analysis\$Partner"
+    $OutputPath = Join-Path $ProjectDirectory "Analysis\Partner\$Partner"
 }
 
 # Get the toolkit directory (where this script is located)
 $toolkitDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+# Function to create standardized folder structure
+function New-AdrStructure {
+    param(
+        [string]$ProjectRoot,
+        [string[]]$PartnerList
+    )
+
+    $analysisPath = Join-Path $ProjectRoot "Analysis"
+    $partnerPath = Join-Path $analysisPath "Partner"
+
+    # Create base directories
+    $directories = @($analysisPath, $partnerPath)
+
+    foreach ($partner in $PartnerList) {
+        $partnerSubPath = Join-Path $partnerPath $partner
+        $directories += $partnerSubPath
+    }
+
+    foreach ($dir in $directories) {
+        if (!(Test-Path $dir)) {
+            New-Item -ItemType Directory -Path $dir -Force | Out-Null
+            Write-Host "Created directory: $dir" -ForegroundColor Green
+        } else {
+            Write-Host "Directory already exists: $dir" -ForegroundColor Blue
+        }
+    }
+
+    # Create shared images folder
+    $imagesPath = Join-Path $analysisPath "images"
+    if (!(Test-Path $imagesPath)) {
+        New-Item -ItemType Directory -Path $imagesPath -Force | Out-Null
+        Write-Host "Created shared images directory: $imagesPath" -ForegroundColor Green
+    }
+
+    return @{
+        AnalysisPath = $analysisPath
+        PartnerPath = $partnerPath
+        ImagesPath = $imagesPath
+    }
+}
 
 # Configuration paths - check project directory first, then toolkit
 # This allows projects to override templates while using toolkit as base
@@ -70,6 +120,15 @@ $toolkitClientConfig = Join-Path $toolkitDir "clients\$($Client.ToLower().Replac
 $clientConfigPath = if (Test-Path $projectClientConfig) { $projectClientConfig } else { $toolkitClientConfig }
 
 # Template paths - check project directory first, then toolkit
+$adrTypeTemplatePaths = @()
+foreach ($type in $Type) {
+    $flavorPath = if ($Flavor) { "/$Flavor" } else { "" }
+    $projectAdrTypeTemplate = Join-Path $ProjectDirectory "Analysis\types\$type$flavorPath\template.md"
+    $toolkitAdrTypeTemplate = Join-Path $toolkitDir "types\$type$flavorPath\template.md"
+    $adrTypeTemplatePath = if (Test-Path $projectAdrTypeTemplate) { $projectAdrTypeTemplate } else { $toolkitAdrTypeTemplate }
+    $adrTypeTemplatePaths += $adrTypeTemplatePath
+}
+
 $projectPartnerTemplate = Join-Path $ProjectDirectory "Analysis\partners\$($Partner.ToLower())\templates\adr-template.md"
 $toolkitPartnerTemplate = Join-Path $toolkitDir "partners\$($Partner.ToLower())\templates\adr-template.md"
 $partnerTemplatePath = if (Test-Path $projectPartnerTemplate) { $projectPartnerTemplate } else { $toolkitPartnerTemplate }
@@ -82,6 +141,9 @@ $projectBaseTemplate = Join-Path $ProjectDirectory "Analysis\ADR-Template.md"
 $toolkitBaseTemplate = Join-Path $toolkitDir "ADR-Template.md"
 $baseTemplatePath = if (Test-Path $projectBaseTemplate) { $projectBaseTemplate } else { $toolkitBaseTemplate }
 
+# ADR Type templates are now the primary base templates
+$baseTemplatePaths = $adrTypeTemplatePaths
+
 # Function to load JSON configuration
 function Get-Configuration {
     param([string]$Path)
@@ -93,6 +155,30 @@ function Get-Configuration {
     }
 }
 
+# Function to merge multiple ADR type templates
+function Merge-AdrTypeTemplates {
+    param([string[]]$TemplatePaths)
+
+    $mergedContent = @()
+
+    foreach ($templatePath in $TemplatePaths) {
+        if (Test-Path $templatePath) {
+            $content = Get-Content $templatePath
+            if ($mergedContent.Count -eq 0) {
+                # First template - add all content
+                $mergedContent = $content
+            } else {
+                # Subsequent templates - merge sections
+                $mergedContent = Merge-AdrSections $mergedContent $content
+            }
+        } else {
+            Write-Warning "ADR type template not found: $templatePath"
+        }
+    }
+
+    return $mergedContent
+}
+
 # Function to merge templates
 function Merge-Templates {
     param(
@@ -101,22 +187,33 @@ function Merge-Templates {
         [string]$ClientTemplate,
         [object]$PartnerConfig,
         [object]$ClientConfig,
-        [hashtable]$Replacements
+        [hashtable]$Replacements,
+        [string[]]$BaseContent = $null
     )
 
-    # Start with partner template if it exists, otherwise base template
-    $templatePath = if ($PartnerTemplate -and (Test-Path $PartnerTemplate)) {
-        $PartnerTemplate
+    # Start with base content if provided, otherwise use base template
+    if ($BaseContent) {
+        $mergedTemplate = $BaseContent
     } else {
-        $BaseTemplate
+        # Start with partner template if it exists, otherwise base template
+        $templatePath = if ($PartnerTemplate -and (Test-Path $PartnerTemplate)) {
+            $PartnerTemplate
+        } else {
+            $BaseTemplate
+        }
+        $mergedTemplate = Get-Content $templatePath
     }
 
-    $mergedTemplate = Get-Content $templatePath
+    # Apply partner customizations if partner template exists
+    if ($PartnerTemplate -and (Test-Path $PartnerTemplate)) {
+        $partnerContent = Get-Content $PartnerTemplate
+        $mergedTemplate = Merge-PartnerSections $mergedTemplate $partnerContent $PartnerConfig
+    }
 
     # Apply client customizations if client template exists
     if ($ClientTemplate -and (Test-Path $ClientTemplate)) {
         $clientContent = Get-Content $ClientTemplate
-        # Merge client-specific sections into the partner template
+        # Merge client-specific sections into the template
         $mergedTemplate = Merge-ClientSections $mergedTemplate $clientContent $ClientConfig
     }
 
@@ -126,6 +223,56 @@ function Merge-Templates {
     }
 
     return $mergedTemplate
+}
+
+# Function to merge ADR sections from multiple templates
+function Merge-AdrSections {
+    param([string[]]$BaseContent, [string[]]$AdditionalContent)
+
+    $result = $BaseContent
+    $sectionsToAdd = @()
+
+    # Find all level 2 headers (##) in additional content that aren't already in base
+    foreach ($line in $AdditionalContent) {
+        if ($line -match "^## (.+)$") {
+            $sectionTitle = $matches[1]
+            $existingSection = $result | Where-Object { $_ -match "^## $sectionTitle$" }
+            if (-not $existingSection) {
+                # Find the section content
+                $sectionStart = $AdditionalContent.IndexOf($line)
+                $sectionEnd = $AdditionalContent.Length
+                for ($i = $sectionStart + 1; $i -lt $AdditionalContent.Length; $i++) {
+                    if ($AdditionalContent[$i] -match "^## " -or $AdditionalContent[$i] -match "^# ") {
+                        $sectionEnd = $i
+                        break
+                    }
+                }
+                $sectionContent = $AdditionalContent[$sectionStart..($sectionEnd - 1)]
+                $sectionsToAdd += ,$sectionContent
+            }
+        }
+    }
+
+    # Add new sections before the "Consequences" section or at the end
+    $insertIndex = -1
+    for ($i = 0; $i -lt $result.Length; $i++) {
+        if ($result[$i] -match "^## Consequences$") {
+            $insertIndex = $i
+            break
+        }
+    }
+
+    if ($insertIndex -eq -1) {
+        # No Consequences section found, add at end
+        $insertIndex = $result.Length
+    }
+
+    foreach ($section in $sectionsToAdd) {
+        $result = $result[0..($insertIndex - 1)] + $section + $result[$insertIndex..($result.Length - 1)]
+        $insertIndex += $section.Length
+    }
+
+    return $result
 }
 
 # Function to merge partner-specific sections
@@ -208,7 +355,11 @@ function Get-SectionTitle {
         "globalStandards" = "Global Standards"
     }
 
-    return $titleMap[$SectionCode] ?? $SectionCode
+    if ($titleMap.ContainsKey($SectionCode)) {
+        return $titleMap[$SectionCode]
+    } else {
+        return $SectionCode
+    }
 }
 
 # Function to generate documents
@@ -472,7 +623,17 @@ function Convert-MermaidToImages {
 }
 
 # Main script logic
-Write-Host "Generating ADR for $Partner + $Client..." -ForegroundColor Cyan
+$typeList = $Type -join ", "
+Write-Host "Generating $typeList ADR for $Partner + $Client..." -ForegroundColor Cyan
+
+# Set up project structure if not skipped
+$partnerPath = Join-Path $ProjectDirectory "Analysis\Partner"
+
+if (-not $SkipStructureSetup) {
+    Write-Host "Setting up project structure..." -ForegroundColor Cyan
+    $structure = New-AdrStructure -ProjectRoot $ProjectDirectory -PartnerList @($Partner)
+    $partnerPath = $structure.PartnerPath
+}
 
 # Ensure output directory exists
 if (!(Test-Path $OutputPath)) {
@@ -500,7 +661,11 @@ $adrNumber = Get-ChildItem (Join-Path $ProjectDirectory "Analysis\ADR-*.md") -Er
     ForEach-Object { [int]($matches[1]) } |
     Sort-Object -Descending |
     Select-Object -First 1
-$adrNumber = ($adrNumber + 1) ?? 1
+if ($null -ne $adrNumber) {
+    $adrNumber = $adrNumber + 1
+} else {
+    $adrNumber = 1
+}
 
 # Prepare replacements
 $replacements = @{
@@ -528,13 +693,18 @@ if ($clientConfig.requiredMetadata) {
 }
 
 # Generate merged template
+# Start with merged ADR type templates
+$mergedAdrTypes = Merge-AdrTypeTemplates $baseTemplatePaths
+
+# Apply partner and client customizations
 $mergedTemplate = Merge-Templates `
-    -BaseTemplate $baseTemplatePath `
+    -BaseTemplate $null `
     -PartnerTemplate $partnerTemplatePath `
     -ClientTemplate $clientTemplatePath `
     -PartnerConfig $partnerConfig `
     -ClientConfig $clientConfig `
-    -Replacements $replacements
+    -Replacements $replacements `
+    -BaseContent $mergedAdrTypes
 
 # Create output filename
 # Clean the title by removing common prefixes like "ADR:" to avoid duplicate prefixes
@@ -545,6 +715,9 @@ if ($ProjectName) {
     $outputBaseName += "-$ProjectName"
 }
 
+# Set markdown output path now that we have outputBaseName
+$markdownOutputPath = Join-Path $partnerPath "$outputBaseName.md"
+
 # Validate content
 $validationIssues = Test-ADRCompliance $mergedTemplate $partnerConfig $clientConfig
 if ($validationIssues) {
@@ -554,10 +727,10 @@ if ($validationIssues) {
 
 # Display planned output
 Write-Host "`nPlanned Output:" -ForegroundColor Cyan
-Write-Host "Output Directory: $OutputPath" -ForegroundColor White
+Write-Host "Markdown Source: $markdownOutputPath" -ForegroundColor White
+Write-Host "Generated Documents in: $OutputPath" -ForegroundColor White
 Write-Host "Files to be created:" -ForegroundColor White
-$templateOutputPath = Join-Path $OutputPath "$outputBaseName.md"
-Write-Host "  - $templateOutputPath" -ForegroundColor White
+Write-Host "  - $markdownOutputPath" -ForegroundColor White
 
 if ($GenerateDiagrams) {
     Write-Host "  - Diagrams in $($ImagesFolder) folder:" -ForegroundColor White
@@ -592,9 +765,8 @@ if ($confirmation -ne 'y' -and $confirmation -ne 'Y' -and $confirmation -ne '') 
 }
 
 # Save merged template
-$templateOutputPath = Join-Path $OutputPath "$outputBaseName.md"
-$mergedTemplate | Out-File $templateOutputPath -Encoding UTF8
-Write-Host "Generated ADR template: $templateOutputPath" -ForegroundColor Green
+$mergedTemplate | Out-File $markdownOutputPath -Encoding UTF8
+Write-Host "Generated ADR template: $markdownOutputPath" -ForegroundColor Green
 
 # Generate Mermaid diagrams if requested
 $mermaidFiles = @()
@@ -628,7 +800,7 @@ foreach ($format in $formats) {
     $outputFilePath = Join-Path $OutputPath "$outputBaseName.$format"
 
     Generate-Document `
-        -InputPath $templateOutputPath `
+        -InputPath $markdownOutputPath `
         -OutputPath $outputFilePath `
         -Format $format `
         -PartnerConfig $partnerConfig `
@@ -639,6 +811,7 @@ foreach ($format in $formats) {
 
 Write-Host "`nADR Generation Complete!" -ForegroundColor Green
 Write-Host "Generated files:" -ForegroundColor Cyan
+Write-Host "  - Markdown: $(Split-Path $markdownOutputPath -Leaf)" -ForegroundColor White
 Get-ChildItem "$OutputPath\$outputBaseName.*" -ErrorAction SilentlyContinue | ForEach-Object {
     Write-Host "  - $($_.Name)" -ForegroundColor White
 }

@@ -1,6 +1,44 @@
-# ADR-Toolkit
+## Quick Start - Integrated Workflow
+
+For new analysis projects, simply cd to your project directory and run:
+
+```powershell
+# For a deep-dive analysis on Ecolab.Crm.Azure.SOW
+& "path\to\toolkit\Generate-Partner-ADR.ps1" `
+  -Partner "Accenture" `
+  -Client "Ecolab" `
+  -Type "func" `
+  -Flavor "deep-dive" `
+  -Title "Deep Dive Analysis of Ecolab.Crm.Azure.SOW"
+```
+
+This automatically:
+1. ✅ Creates the `Analysis/Partner/` structure
+2. ✅ Generates initial Markdown template in `Analysis/Partner/`
+3. ✅ Creates partner-specific documents in `Analysis/Partner/[Partner]/`
+
+### File Organization
+- **Markdown Sources**: `Analysis/Partner/*.md` (shared across partners)
+- **Generated Documents**: `Analysis/Partner/[PartnerName]/*.docx` (partner-branded)
+- **Images/Diagrams**: `Analysis/images/` (shared assets)
 
 A comprehensive toolkit for generating Architecture Decision Records (ADRs) with client and partner-specific branding, templates, and automation.
+
+## Enhanced Requirements Analysis
+
+The ADR-Toolkit includes an enhanced requirements template (`types/requirements/`) with comprehensive User Story capabilities:
+
+- **Detailed User Story Format**: Business context, scenarios, scenario-based acceptance criteria, and story point breakdowns
+- **Requirements Decomposition**: Break down complex requirements into implementable user stories
+- **Standalone Templates**: `User-Story-Template-Enhanced.md` for independent use
+- **Integration Guide**: Complete documentation in `types/requirements/README.md`
+
+Use the requirements type when generating ADRs that require detailed business analysis and user story breakdown:
+
+```powershell
+# Generate requirements ADR with User Story format
+.\Generate-Partner-ADR.ps1 -Type "requirements" -Title "Business Requirements Analysis"
+```
 
 ## Overview
 
@@ -10,6 +48,7 @@ The ADR-Toolkit provides:
 - **DOCX template generation** with professional formatting
 - **PowerShell automation** for ADR creation and management
 - **Customizable templates** for different ADR styles
+- **Enhanced Requirements Analysis** with comprehensive User Story templates
 
 ## Quick Start
 
@@ -52,11 +91,16 @@ adr-toolkit/
 │   ├── carter-machinery/
 │   ├── ecolab/
 │   └── western-states/
-└── partners/                       # Partner-specific branding
-    ├── accenture/
-    ├── acornsoft/
-    ├── avanade/
-    └── elogic/
+├── partners/                       # Partner-specific branding
+│   ├── accenture/
+│   ├── acornsoft/
+│   ├── avanade/
+│   └── elogic/
+└── types/                          # ADR type templates
+    ├── requirements/               # Enhanced requirements with User Stories
+    ├── func/                       # Azure Functions templates
+    ├── apim/                       # API Management templates
+    └── ...                         # Additional service templates
 ```
 
 ## Client Configurations
@@ -104,7 +148,14 @@ adr-toolkit/
 The toolkit automatically selects the appropriate template based on:
 - Client configuration (if specified)
 - Partner branding (if specified)
-- ADR type (technical, business, architectural, implementation)
+- ADR type (technical, business, architectural, implementation, **requirements**)
+
+### Requirements Type Features
+When using `-Type "requirements"`, the toolkit provides:
+- **User Story Templates**: Comprehensive format with business context and scenario-based acceptance criteria
+- **Story Point Estimation**: Built-in effort estimation framework
+- **Requirements Breakdown**: Tools for decomposing complex business requirements
+- **Integration Guidance**: Complete documentation for requirements analysis
 
 ### 2. Content Population
 Templates include placeholders for:
@@ -198,6 +249,12 @@ The ADR-Toolkit integrates seamlessly with the Azure Service Analysis Framework:
 - Document assumptions and constraints
 - Link related ADRs and decisions
 
+### Requirements Analysis Best Practices
+- Use the `requirements` type for business requirements and user story development
+- Break down complex requirements into detailed user stories with scenario-based acceptance criteria
+- Include story point estimates for effort planning
+- Reference the User Story templates in `types/requirements/` for consistent formatting
+
 ### Template Customization
 - Start with provided templates as baselines
 - Customize branding while maintaining readability
@@ -260,6 +317,10 @@ This ADR-Toolkit is part of the Azure Service Analysis Framework and follows the
 
 ## Version History
 
+- **v1.1.0**: Enhanced requirements template with comprehensive User Story format
+  - Added `types/requirements/` with detailed user story templates
+  - Integrated story point estimation and scenario-based acceptance criteria frameworks
+  - Added standalone User Story templates for independent use
 - **v1.0.0**: Initial release with client and partner configurations
 - Support for Ecolab, Carter Machinery, Western States clients
 - Support for Accenture, Acornsoft, Avanade, eLogic partners

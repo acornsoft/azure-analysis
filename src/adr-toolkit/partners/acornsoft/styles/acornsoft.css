@@ -12,7 +12,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: #2E8B57; /* Acornsoft Primary Green */
+    color: #4F2001; /* Acornsoft Primary Maroon */
     font-weight: 600;
     margin-top: 1.5em;
     margin-bottom: 0.5em;
@@ -20,20 +20,20 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-    border-bottom: 3px solid #2E8B57;
+    border-bottom: 3px solid #FF9900;
     padding-bottom: 10px;
     font-size: 2.2em;
-    color: #2E8B57;
+    color: #FF9900;
 }
 
 h2 {
-    border-bottom: 2px solid #3CB371; /* Acornsoft Secondary Green */
+    border-bottom: 2px solid #FF9900; /* Acornsoft Secondary Maroon */
     padding-bottom: 5px;
     font-size: 1.8em;
 }
 
 h3 {
-    color: #3CB371;
+    color: #FF9900;
     font-size: 1.4em;
 }
 
@@ -60,7 +60,7 @@ pre code {
 }
 
 blockquote {
-    border-left: 4px solid #2E8B57;
+    border-left: 4px solid #FF9900;
     padding-left: 15px;
     margin-left: 0;
     color: #555;
@@ -82,7 +82,7 @@ th, td {
 }
 
 th {
-    background-color: #2E8B57;
+    background-color: #FF9900;
     color: white;
     font-weight: 600;
 }
@@ -128,7 +128,7 @@ li {
 /* Decision outcome styling */
 .decision-outcome {
     background-color: #d4edda;
-    border: 2px solid #2E8B57;
+    border: 2px solid #FF9900;
     border-radius: 8px;
     padding: 20px;
     margin: 20px 0;

@@ -1,0 +1,22 @@
+# Secure PAT Options for Attach-FileToWorkItem.ps1
+
+## Option 1: Environment Variable (Session)
+$env:AZURE_DEVOPS_PAT = "your_token_here"
+.\Attach-FileToWorkItem.ps1 -WorkItemId "834687" -FilePath "path\to\file.md"
+
+## Option 2: Environment Variable (Permanent)
+[System.Environment]::SetEnvironmentVariable("AZURE_DEVOPS_PAT", "your_token_here", "User")
+.\Attach-FileToWorkItem.ps1 -WorkItemId "834687" -FilePath "path\to\file.md"
+
+## Option 3: Windows Credential Manager (Most Secure)
+Install-Module -Name CredentialManager -Scope CurrentUser -Force
+New-StoredCredential -Target "AzureDevOps_PAT" -UserName "PAT" -Password "your_token_here" -Type Generic
+.\Attach-FileToWorkItem.ps1 -WorkItemId "834687" -FilePath "path\to\file.md"
+
+## Option 4: Direct Parameter (Least Secure)
+.\Attach-FileToWorkItem.ps1 -PersonalAccessToken "your_token_here" -WorkItemId "834687" -FilePath "path\to\file.md"
+
+## Option 5: Secure Prompt (Script will ask)
+.\Attach-FileToWorkItem.ps1 -WorkItemId "834687" -FilePath "path\to\file.md"
+# (Script will prompt for PAT securely)
+

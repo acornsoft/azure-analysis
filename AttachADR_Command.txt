@@ -1,0 +1,5 @@
+Command to attach ADR to work item 834687:
+
+.\Attach-FileToWorkItem.ps1 -PersonalAccessToken "YOUR_PAT_TOKEN" -WorkItemId "834687" -FilePath "c:\Users\david.blaszyk\com.avanade.partner\ecolab\src\Ecolab.CE.Azure\Ecolab.CRM.Azure.CDM\Analysis\Partner\ADR-Update-User-Account-Change-Feed-Processing-Based-on-Sales-Skill.md"
+
+Replace YOUR_PAT_TOKEN with your actual Personal Access Token from Azure DevOps.
