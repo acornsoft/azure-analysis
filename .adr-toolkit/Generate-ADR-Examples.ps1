@@ -3,7 +3,7 @@
 # with automatic Mermaid diagram generation and conversion to images
 
 # IMPORTANT: Run this script from your project root directory
-# The script will automatically place files in docs\{Partner}\
+# The script will automatically place files in Analysis\{Partner}\
 
 # Basic usage with automatic diagram discovery
 & ".\src\azure-analysis\src\adr-toolkit\Generate-Partner-ADR.ps1" `
@@ -19,8 +19,8 @@
     -Title "System Architecture Overview" `
     -GenerateDiagrams `
     -DiagramTemplates @(
-        ".\docs\diagrams\message-flow-diagram.mmd",
-        ".\docs\diagrams\system-architecture.mmd"
+        ".\Analysis\diagrams\message-flow-diagram.mmd",
+        ".\Analysis\diagrams\system-architecture.mmd"
     ) `
     -ImagesFolder "diagrams" `
     -GenerateAllFormats
@@ -31,5 +31,5 @@
     -Client "Carter-Machinery" `
     -Title "Infrastructure Migration Strategy" `
     -GenerateDiagrams `
-    -OutputPath ".\docs\Avanade" `
+    -OutputPath ".\Analysis\Avanade" `
     -ImagesFolder "visuals"

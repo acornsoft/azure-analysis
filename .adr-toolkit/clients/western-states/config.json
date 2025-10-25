@@ -1,0 +1,56 @@
+{
+  "client": "Western States",
+  "code": "western-states",
+  "industry": "Industrial Equipment",
+  "version": "1.0",
+  "branding": {
+    "primaryColor": "#004080",
+    "secondaryColor": "#0066CC",
+    "accentColor": "#0080FF",
+    "logo": "western-states-logo.png",
+    "fontFamily": "Arial, sans-serif",
+    "tagline": "Industrial Solutions & Equipment"
+  },
+  "compliance": {
+    "dataClassification": "Internal",
+    "retentionPolicy": "5 years",
+    "approvalRequired": false,
+    "regulatoryBodies": ["OSHA", "EPA"],
+    "securityStandards": ["NIST", "ISO 27001"],
+    "dataPrivacy": ["CCPA"]
+  },
+  "customSections": [
+    "equipmentIntegration",
+    "maintenanceScheduling",
+    "inventoryManagement",
+    "partsOptimization"
+  ],
+  "requiredMetadata": [
+    "equipmentType",
+    "maintenanceSchedule",
+    "inventorySystem",
+    "operationsManager"
+  ],
+  "stakeholders": [
+    "IT Director",
+    "Operations Manager",
+    "Equipment Manager",
+    "Maintenance Director",
+    "Parts Manager"
+  ],
+  "businessDomains": [
+    "Construction Equipment",
+    "Industrial Machinery",
+    "Power Systems",
+    "Parts & Service"
+  ],
+  "validationRules": {
+    "equipmentIntegrationRequired": true,
+    "maintenanceScheduleRequired": true
+  },
+  "approvalWorkflow": {
+    "technicalReview": true,
+    "operationsReview": true,
+    "approvalTimeout": "7 days"
+  }
+}

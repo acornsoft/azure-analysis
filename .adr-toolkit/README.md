@@ -18,7 +18,7 @@ This automatically:
 3. ✅ Creates partner-specific documents in `docs/Analysis/[Partner]/`
 
 ### File Organization
-- **Markdown Sources**: `docs/Analysis/ResearchArea/*.md` (research-specific markdown files)
+- **Markdown Sources**: `docs/Analysis/[ResearchArea]-Research/*.md` (research-specific markdown files)
 - **Generated Documents**: `docs/Analysis/[Partner]/*.docx` (partner-branded documents)
 - **Images/Diagrams**: `docs/Analysis/images/` (shared assets)
 
@@ -71,55 +71,36 @@ The ADR-Toolkit provides:
 #### Using PowerShell Script
 ```powershell
 # Generate a technical ADR
-.\generate-adr.ps1 -Type "technical" -Title "Database Architecture Decision" -OutputPath ".\docs\Analysis\" -ResearchArea "Billing-Arrangements-Research"
+.\generate-adr.ps1 -Type "technical" -Title "Database Architecture Decision" -OutputPath ".\Analysis\"
 ```
 
 #### Using the Main Script
 ```powershell
-# Run the partner ADR generator (interactive mode)
+# Run the partner ADR generator
 .\Generate-Partner-ADR.ps1
-
-# Or specify parameters directly
-.\Generate-Partner-ADR.ps1 -Type "technical" -Title "Database Decision" -Partner "Avanade" -ResearchArea "Billing-Arrangements-Research"
 ```
-
-## ResearchArea Parameter
-
-The ADR-Toolkit now requires a `ResearchArea` parameter to specify which research folder to use for ADR markdown files:
-
-- **Research Folders**: Located in `docs/Analysis/[ResearchArea]-Research/` (e.g., `Billing-Arrangements-Research`)
-- **Partner Folders**: Generated documents are placed in `docs/Analysis/[Partner]/` (e.g., `docs/Analysis/Avanade/`)
-- **Available Research Areas**: 
-  - `Billing-Arrangements-Research`
-  - `Customer-Setup-Research`
-  - `D365-PZ-Migration-Research`
-  - `D365-Snowflake-D-Research`
-  - `Digital-Enablement-Research`
-  - `Service-Orders-Research`
-  - `ShipTo-SoldTo-Research`
 
 ## Directory Structure
 
 ```
-docs/Analysis/
-├── ADR-Template.md                  # Base ADR template
-├── images/                          # Shared images and diagrams
-├── partners/                        # Partner-specific branding
+adr-toolkit/
+├── ADR-DOCX-Template-Guide.md      # Comprehensive guide for DOCX templates
+├── Create-DOCX-Templates.md        # How to create custom DOCX templates
+├── Generate-Partner-ADR.ps1        # Main ADR generation script
+├── clients/                        # Client-specific configurations
+│   ├── carter-machinery/
+│   ├── ecolab/
+│   └── western-states/
+├── partners/                       # Partner-specific branding
 │   ├── accenture/
 │   ├── acornsoft/
 │   ├── avanade/
 │   └── elogic/
-├── clients/                         # Client-specific configurations
-│   ├── carter-machinery/
-│   ├── ecolab/
-│   └── western-states/
-├── types/                           # ADR type templates
-│   ├── requirements/                # Enhanced requirements with User Stories
-│   ├── func/                        # Azure Functions templates
-│   ├── apim/                        # API Management templates
-│   └── ...                          # Additional service templates
-└── [ResearchArea]-Research/         # Research-specific folders (e.g., Billing-Arrangements-Research)
-    └── ADR-*.md                     # Generated ADR markdown files
+└── types/                          # ADR type templates
+    ├── requirements/               # Enhanced requirements with User Stories
+    ├── func/                       # Azure Functions templates
+    ├── apim/                       # API Management templates
+    └── ...                         # Additional service templates
 ```
 
 ## Client Configurations
@@ -258,7 +239,7 @@ The ADR-Toolkit integrates seamlessly with the Azure Service Analysis Framework:
 1. **Analysis Results** → ADR-Toolkit input
 2. **AI-Generated Content** → Professional formatting
 3. **Client Branding** → Stakeholder-ready documents
-4. **Version Control** → Git-compatible markdown in `docs/Analysis/[ResearchArea]-Research/`
+4. **Version Control** → Git-compatible markdown
 
 ## Best Practices
 

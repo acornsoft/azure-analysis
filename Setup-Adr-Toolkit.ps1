@@ -16,6 +16,32 @@ $workspaceRoot = Get-Location
 $toolkitDir = Join-Path $workspaceRoot ".adr-toolkit"
 $vscodeDir = Join-Path $workspaceRoot ".vscode"
 
+# Get the source toolkit directory (assuming it's in the same directory as this script)
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$sourceToolkitDir = Join-Path $scriptDir "src\adr-toolkit"
+
+# Validate partner and client exist in source toolkit
+$partnerDir = Join-Path $sourceToolkitDir "partners\$($Partner.ToLower())"
+$clientDir = Join-Path $sourceToolkitDir "clients\$($Client.ToLower().Replace(' ', '-').Replace('_', '-'))"
+
+if (!(Test-Path $partnerDir)) {
+    Write-Warning "Partner '$Partner' not found in toolkit. Available partners:"
+    if (Test-Path (Join-Path $sourceToolkitDir "partners")) {
+        Get-ChildItem (Join-Path $sourceToolkitDir "partners") -Directory | ForEach-Object { Write-Host "  - $($_.Name)" -ForegroundColor Yellow }
+    }
+    Write-Host "Using default partner 'Accenture'" -ForegroundColor Blue
+    $Partner = "Accenture"
+}
+
+if (!(Test-Path $clientDir)) {
+    Write-Warning "Client '$Client' not found in toolkit. Available clients:"
+    if (Test-Path (Join-Path $sourceToolkitDir "clients")) {
+        Get-ChildItem (Join-Path $sourceToolkitDir "clients") -Directory | ForEach-Object { Write-Host "  - $($_.Name)" -ForegroundColor Yellow }
+    }
+    Write-Host "Using default client 'Generic'" -ForegroundColor Blue
+    $Client = "Generic"
+}
+
 # Check if toolkit already exists
 if ((Test-Path $toolkitDir) -and -not $Force) {
     Write-Warning "ADR Toolkit already exists in this workspace."
@@ -31,23 +57,13 @@ Write-Host "Creating directories..." -ForegroundColor Blue
 New-Item -ItemType Directory -Path $toolkitDir -Force | Out-Null
 New-Item -ItemType Directory -Path $vscodeDir -Force | Out-Null
 
-# Copy toolkit files from template (assuming it's in the same directory as this script)
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$templatePath = Join-Path $scriptDir "adr-toolkit-template.zip"
-
-if (Test-Path $templatePath) {
-    Write-Host "Extracting toolkit template..." -ForegroundColor Blue
-    Expand-Archive -Path $templatePath -DestinationPath $toolkitDir -Force
+# Copy toolkit files from source directory
+if (Test-Path $sourceToolkitDir) {
+    Write-Host "Copying toolkit files..." -ForegroundColor Blue
+    Copy-Item "$sourceToolkitDir\*" $toolkitDir -Recurse -Force
 } else {
-    Write-Warning "Template archive not found. Copying from current location..."
-    # Fallback: copy from current workspace if available
-    $sourceToolkit = Join-Path (Split-Path -Parent $scriptDir) ".adr-toolkit"
-    if (Test-Path $sourceToolkit) {
-        Copy-Item "$sourceToolkit\*" $toolkitDir -Recurse -Force
-    } else {
-        Write-Error "No toolkit template found. Please ensure adr-toolkit-template.zip exists."
-        exit 1
-    }
+    Write-Error "Source toolkit directory not found: $sourceToolkitDir"
+    exit 1
 }
 
 # Update configuration for this workspace

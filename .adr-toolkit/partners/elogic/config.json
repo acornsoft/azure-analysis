@@ -1,0 +1,53 @@
+{
+  "partner": "eLogic",
+  "code": "elogic",
+  "version": "1.0",
+  "documentStandards": {
+    "fontFamily": "eLogic Corporate Font, Arial, sans-serif",
+    "primaryColor": "#007BFF",
+    "secondaryColor": "#0056B3",
+    "headerStyle": "eLogic Blue Professional",
+    "footerText": " 2025 eLogic. All rights reserved. | eLogic Confidential",
+    "confidentialityLevels": ["Public", "Internal", "Confidential", "Restricted"],
+    "defaultClassification": "eLogic Confidential"
+  },
+  "requiredSections": [
+    "executiveSummary",
+    "businessCase",
+    "technicalArchitecture",
+    "implementationRoadmap",
+    "stakeholderImpact"
+  ],
+  "optionalSections": [
+    "regulatoryCompliance",
+    "securityConsiderations",
+    "performanceBenchmarks",
+    "dataGovernance"
+  ],
+  "metadataFields": [
+    "elogicPractice",
+    "clientEngagementManager",
+    "deliveryLead",
+    "solutionArchitect",
+    "technicalArchitect",
+    "projectManager"
+  ],
+  "outputFormats": ["docx", "pdf"],
+  "defaultTemplate": "elogic-template.docx",
+  "pandocOptions": {
+    "docx": ["--reference-doc=elogic-template.docx", "--toc", "--toc-depth=3"],
+    "pdf": ["--pdf-engine=pdflatex", "-V geometry:margin=1in", "--toc"]
+  },
+  "validationRules": {
+    "executiveSummaryRequired": true,
+    "businessCaseRequired": true,
+    "minimumOptions": 3,
+    "prosConsRequired": true,
+    "implementationPlanRequired": true
+  },
+  "approvalWorkflow": {
+    "requiredApprovers": ["Engagement Manager", "Solution Architect"],
+    "approvalTimeout": "7 days",
+    "escalationPath": "Practice Lead"
+  }
+}

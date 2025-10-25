@@ -125,12 +125,12 @@ $config | ConvertTo-Json | Out-File -FilePath (Join-Path $installPath "deploymen
 # Create convenience scripts
 $generateScript = @"
 # ADR Generation Helper Script
-# Usage: .\generate-adr.ps1 -Type "technical" -Title "My ADR" -OutputPath ".\Analysis\"
+# Usage: .\generate-adr.ps1 -Type "technical" -Title "My ADR" -OutputPath ".\docs\"
 
 param(
     [string]`$Type = "technical",
     [string]`$Title,
-    [string]`$OutputPath = ".\Analysis\"
+    [string]`$OutputPath = ".\docs\"
 )
 
 # Import ADR-Toolkit functions

@@ -43,7 +43,7 @@ function New-AdrStructure {
         [string[]]$PartnerList
     )
 
-    $analysisPath = Join-Path $ProjectRoot "docs\Analysis"
+    $analysisPath = Join-Path $ProjectRoot "Analysis"
     $partnerPath = Join-Path $analysisPath "Partner"
 
     # Create base directories
@@ -185,7 +185,7 @@ Analysis/
 2. Run the generation script to create partner-specific documents:
 
 ```powershell
-.\scripts\Generate-All-Partner-ADRs.ps1 -MarkdownFile "Analysis\Partner\ADR-Example.md"
+.\scripts\Generate-All-Partner-ADRs.ps1 -MarkdownFile "docs\Partner\ADR-Example.md"
 ```
 
 ### Supported Partners
