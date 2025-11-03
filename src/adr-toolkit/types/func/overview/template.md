@@ -75,7 +75,46 @@
 - **Security**: [Identity setup, permissions, certificates]
 - **Development Tools**: [IDE, testing frameworks, CI/CD pipelines]
 
+## Awesome-Copilot Enhanced Analysis
+
+### Azure Functions TypeScript Best Practices
+
+Integration of azure-functions-typescript.instructions.md for modern serverless development.
+
+**Modern TypeScript Patterns**: [Use async/await, Node.js v20+ built-ins, avoid blocking operations]
+**Function Organization**: [Single function per endpoint, consistent naming: src/functions/`<resource-name>`-`<http-verb>`.ts]
+**API Schema Management**: [Update OpenAPI schemas and README.md with code changes]
+**Dependency Management**: [Minimize external packages, prefer Node.js built-in modules]
+
+### Terraform Infrastructure Best Practices
+
+Enhanced IaC implementation using terraform-azure.instructions.md.
+
+**AVM Integration**: [Azure Verified Modules for Function Apps, Storage, and networking components]
+**State Management**: [Remote backend configuration, state locking, and security implementation]
+**Security Implementation**: [Managed identities, Key Vault integration, network isolation]
+**Resource Naming**: [CAF-compliant naming conventions, consistent tagging strategy]
+
+### Resource Health Diagnosis
+
+Automated health assessment using azure-resource-health-diagnose.prompt.md workflow.
+
+**Function Execution Monitoring**: [Success rates, duration metrics, error frequency analysis]
+**Performance Diagnostics**: [Cold start optimization, execution timeouts, resource utilization]
+**Dependency Tracking**: [External API failures, database connection issues, message queue problems]
+**Log Analysis**: [Application Insights telemetry, custom logging, exception patterns]
+
+### Cost Optimization Strategies
+
+Financial governance integration using az-cost-optimize.prompt.md.
+
+**Hosting Plan Optimization**: [Consumption vs Premium plan analysis based on execution patterns]
+**Resource Rightsizing**: [Memory allocation, timeout settings, concurrent execution limits]
+**Execution Scheduling**: [Optimize function triggers, reduce unnecessary executions]
+**Monitoring Costs**: [Application Insights retention policies, log aggregation strategies]
+
 ## Related Documentation
+
 - [Requirements Document Reference]
 - [API Specifications]
 - [Integration Architecture]

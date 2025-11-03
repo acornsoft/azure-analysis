@@ -268,20 +268,89 @@
 
 {Describe how this decision will be validated.}
 
-## Implementation Plan
+## Azure Well-Architected Framework Assessment
 
-### Phase 1: Foundation
-{Immediate implementation steps}
+### Reliability
 
-### Phase 2: Enhancement
-{Performance improvements}
+- High availability and disaster recovery
+- Message durability and delivery guarantees
+- Service level agreements and uptime
+- Failure handling and recovery
+- Monitoring and incident response
 
-### Phase 3: Optimization
-{Cost optimizations}
+### Security
 
-## Risks and Mitigation
+- Authentication and authorization
+- Data protection and encryption
+- Network security and isolation
+- Threat protection and monitoring
+- Compliance and governance
 
-{Technical, operational, and business risks}
+### Performance Efficiency
+
+- Throughput and latency optimization
+- Message processing efficiency
+- Resource utilization optimization
+- Cost-performance balance
+- Auto-scaling and elasticity
+
+### Cost Optimization Pillar
+
+- Namespace tier optimization
+- Message volume and size optimization
+- Geo-redundancy cost analysis
+- Usage pattern optimization
+- Budget management and forecasting
+
+### Operational Excellence
+
+- Monitoring and observability
+- Automation and DevOps integration
+- Incident response and troubleshooting
+- Documentation and knowledge management
+- Continuous improvement processes
+
+## Azure Principal Architect Guidance
+
+### Architectural Recommendations
+
+{Strategic guidance from Azure Principal Architect perspective}
+
+### Messaging Best Practices
+
+{Service Bus-specific best practices and implementation guidance}
+
+### Enterprise Messaging Patterns
+
+{Enterprise messaging patterns and architectural principles}
+
+## Terraform Infrastructure Guidance
+
+### Resource Configuration
+
+{Recommended Terraform resource configurations for Service Bus}
+
+### Infrastructure as Code Patterns
+
+{IaC best practices for Service Bus deployment and management}
+
+### State Management
+
+{Terraform state management for Service Bus resources}
+
+## Resource Health Diagnosis
+
+### Health Check Procedures
+
+{Step-by-step resource health assessment}
+
+### Common Issues and Resolutions
+
+{Frequent problems and troubleshooting guidance}
+
+### Proactive Monitoring
+
+{Health monitoring and alerting recommendations}
 
 ## Related ADRs
 
